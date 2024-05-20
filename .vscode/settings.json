@@ -1,0 +1,4 @@
+{
+    "debug.console.acceptSuggestionOnEnter": "off",
+    "editor.acceptSuggestionOnEnter": "on"
+}

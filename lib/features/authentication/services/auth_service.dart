@@ -24,7 +24,7 @@ class AuthService {
           password: password,
           mobilenumber: mobilenumber,
           email: email,
-          token: '');
+          token: '', eventname: [], followers: [], following: []);
       print('15454');
       http.Response res = await http.post(Uri.parse('$uri/api/signup'),
           body: user.toJson(),
@@ -59,7 +59,7 @@ class AuthService {
           context: context,
           onSuccess: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
-            Provider.of<UserProvider>(context, listen: false).setUser(res.body);
+            Provider.of<UserProvider>(context, listen: false).setUser(json.decode(res.body));
             await prefs.setString(
                 'x-auth-token', jsonDecode(res.body)['token']);
             showSnackBar(context, 'Succesfully Logged In');
@@ -69,6 +69,7 @@ class AuthService {
     } catch (e) {
       print('The error is $e');
       showSnackBar(context, e.toString());
+      log(e.toString());
     }
   }
 
@@ -125,13 +126,14 @@ class AuthService {
             });
 
         var userProvider = Provider.of<UserProvider>(context, listen: false);
-        userProvider.setUser(userRes.body);
+        userProvider.setUser(json.decode(userRes.body));
         log(userProvider.user.fname);
         log(userProvider.user.token);
       }
     } catch (e) {
       print('The error is $e');
       showSnackBar(context, e.toString());
+      log(e.toString());
     }
   }
 }

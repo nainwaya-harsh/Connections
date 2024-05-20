@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PopularCheckins extends StatefulWidget {
-  const PopularCheckins({super.key});
+  final String eventName;
+  final String attendees;
+  const PopularCheckins({super.key, required this.eventName, required this.attendees});
 
   @override
   State<PopularCheckins> createState() => _PopularCheckinsState();
@@ -37,7 +39,7 @@ class _PopularCheckinsState extends State<PopularCheckins> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        'Arijit Singh Concert',
+                        widget.eventName,
                         style: GoogleFonts.nunito(
                             fontSize: 14, fontWeight: FontWeight.w700),
                       ),
@@ -55,7 +57,7 @@ class _PopularCheckinsState extends State<PopularCheckins> {
                             width: 10,
                           ),
                           Text(
-                            '500 Attendees',
+                            '${widget.attendees} Attendees',
                             style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,

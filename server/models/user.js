@@ -22,11 +22,10 @@ const userSchema=mongoose.Schema({
         required:true,
         type: String
     },
-    // following:[
- 
-    // ],
-    // followers:[]
+    following:[],
+    followers:[],
+    eventname:[]
 })
 
 const User=mongoose.model("User",userSchema)
-module.exports=User;
+module.exports={User,userSchema};

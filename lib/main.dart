@@ -4,6 +4,7 @@ import 'package:connections/common/widgets/bottom_navigation.dart';
 import 'package:connections/features/authentication/services/auth_service.dart';
 import 'package:connections/features/home/screens/home_screen.dart';
 import 'package:connections/features/splash_screeen/splash_screen.dart';
+import 'package:connections/provider/event_provider.dart';
 import 'package:connections/provider/user_provider.dart';
 import 'package:connections/routes.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,9 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserProvider())],
+      providers: [ChangeNotifierProvider(create: (context) => UserProvider()),
+      ChangeNotifierProvider(create: (context)=>EventProvider())
+      ],
       child: const MyApp()));
 }
 
@@ -42,10 +45,11 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: Provider.of<UserProvider>(context).user.token.isEmpty
+      // home: Provider.of<UserProvider>(context).user.fname.isEmpty
       //     ? const SplashScreen()
       //     : BottomNavigation(),
       home: SplashScreen(),
     );
   }
 }
+

@@ -1,10 +1,15 @@
 import 'package:connections/common/widgets/bottom_navigation.dart';
+import 'package:connections/features/GuestAccount/screens/guest_profile.dart';
 import 'package:connections/features/authentication/screens/landing_screen.dart';
 import 'package:connections/features/authentication/screens/login.dart';
 import 'package:connections/features/authentication/screens/signup.dart';
 import 'package:connections/features/authentication/screens/user_details.dart';
+import 'package:connections/features/createEvent/screens/attend_event.dart';
 import 'package:connections/features/home/screens/home_screen.dart';
+import 'package:connections/models/eventModel.dart';
 import 'package:flutter/material.dart';
+
+import 'models/userModel.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
@@ -21,6 +26,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(builder: (_) =>  UserDetails(mobileNumber: number));
     case BottomNavigation.routeName:
       return MaterialPageRoute(builder: (_) => const BottomNavigation());
+    case EventAttendees.routeName:
+      var event=routeSettings.arguments as EventModel;
+      return MaterialPageRoute(builder: (_) =>  EventAttendees(event: event,));
+    case GuestProfile.routeName:
+    var guest=routeSettings.arguments as User;
+      return MaterialPageRoute(builder: (_) =>  GuestProfile(guest: guest,));
     default:
       return MaterialPageRoute(
           builder: (_) => const Scaffold(

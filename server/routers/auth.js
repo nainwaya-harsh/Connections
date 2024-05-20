@@ -1,5 +1,5 @@
 const express=require('express')
-const User=require("../models/user")
+const {User}=require("../models/user")
 const authRouter=express.Router();
 const bycryptjs=require('bcryptjs')
 const jwt=require('jsonwebtoken');
@@ -7,7 +7,7 @@ const auth=require('../middlewares/auth')
 // For creating account
 authRouter.post("/api/signup",async(req,res)=>{
     try {
-        const{fname,lname,mobilenumber,email,password}=req.body;
+        const{fname,lname,mobilenumber,email,password,eventname,followers,following}=req.body;
         const existingUser=await User.findOne({email});
         if(existingUser){
             res.status(400).json({msg:"User With Same email Found"})
@@ -18,7 +18,10 @@ authRouter.post("/api/signup",async(req,res)=>{
             lname,
             email,
             password:hashedPassword,
-            mobilenumber
+            mobilenumber,
+            eventname,
+            followers,
+            following
         });
         user=await user.save();
         res.json(user)

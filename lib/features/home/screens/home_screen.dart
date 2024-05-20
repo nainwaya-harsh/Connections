@@ -1,6 +1,10 @@
+import 'package:connections/constants/colors.dart';
+import 'package:connections/features/createEvent/screens/attend_event.dart';
+import 'package:connections/features/createEvent/services/event.dart';
 import 'package:connections/features/home/widgets/friends_checkins.dart';
 import 'package:connections/features/home/widgets/popular_checkins.dart';
 import 'package:connections/features/home/widgets/storyrow.dart';
+import 'package:connections/models/eventModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,6 +17,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  EventService _event=EventService();
+  List<EventModel>? eventList;
+  @override
+  void initState(){
+    // TODO: implement initState
+  //  await _event.getEvents(context);
+  getEvents();
+  }
+
+  void getEvents()async {
+    eventList=await _event.getEvents(context);
+    setState(() {
+      
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
@@ -49,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      body: SingleChildScrollView(
+      body:eventList==null?Center(child: CircularProgressIndicator(color: buttonColor,)): SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -103,11 +123,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 20, fontWeight: FontWeight.w800),
                     ),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [PopularCheckins(), PopularCheckins()],
-                    ),
+                  // SingleChildScrollView(
+                  //   scrollDirection: Axis.horizontal,
+                  //   child: Row(
+                  //     children: [PopularCheckins(), PopularCheckins()],
+                  //   ),
+                  // ),
+                  Container(
+                    height: 100,
+                    child: ListView.builder(scrollDirection: Axis.horizontal,itemCount: eventList!.length,itemBuilder: (context,index){
+                      EventModel event=eventList![index];
+                      return InkWell(onTap: () {
+                        Navigator.pushNamed(context, EventAttendees.routeName,arguments: event);
+                      },child: PopularCheckins(eventName: event.ename, attendees: event.eguests.length.toString(),));
+                    }),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8, top: 8),

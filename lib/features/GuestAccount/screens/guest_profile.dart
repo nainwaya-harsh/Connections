@@ -1,25 +1,34 @@
-import 'package:connections/constants/colors.dart';
-import 'package:connections/features/home/widgets/friends_checkins.dart';
-import 'package:connections/features/profile/widgets/follower_stats.dart';
-import 'package:connections/features/profile/widgets/shared_moments.dart';
-import 'package:connections/provider/user_provider.dart';
+import 'package:connections/features/GuestAccount/widgets/follower_stats.dart';
+import 'package:connections/features/GuestAccount/widgets/friends_checkins.dart';
+import 'package:connections/features/GuestAccount/widgets/shared_moments.dart';
+import 'package:connections/models/userModel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+import '../../../constants/colors.dart';
+import '../../../provider/user_provider.dart';
+
+class GuestProfile extends StatefulWidget {
+  static const routeName='/guest-profile';
+  final User guest;
+  const GuestProfile({super.key,required this.guest});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<GuestProfile> createState() => _GuestProfileState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  bool isLocked = true;
+class _GuestProfileState extends State<GuestProfile> {
   String selectedItem = 'Posts';
   List<String> selectedItems = ['Posts', 'Shared Moments'];
-
+  bool isLocked=true;
+ List<User> mutuals=[];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
@@ -29,9 +38,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Image.asset(
-          'assets/icons/back_arrow.png',
-          scale: 4.5,
+        leading: InkWell(
+          onTap: (){
+            Navigator.pop(context);
+          },
+          child: Image.asset(
+            'assets/icons/back_arrow.png',
+            scale: 4.5,
+          ),
         ),
         actions: [
           Image.asset(
@@ -89,12 +103,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // ),
                           Image.asset('assets/images/person1.png'),
                           Text(
-                            user.fname,
+                            widget.guest.fname,
                             style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.w800, fontSize: 18),
                           ),
                           Text(
-                            user.lname,
+                           widget.guest.lname,
                             style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.w500, fontSize: 16),
                           ),
@@ -126,19 +140,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Positioned(
                       bottom: 10,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                             width: w * 0.12,
                           ),
-                          FollowerStats(data: 100, title: 'Buddies'),
+                          FollowerStats(data: widget.guest.followers.length, title: 'Followers'),
                           SizedBox(
                             width: w * 0.12,
                           ),
-                          FollowerStats(data: 100, title: 'Buddies'),
+                          FollowerStats(data: widget.guest.followers.length, title: 'Following'),
                           SizedBox(
                             width: w * 0.12,
                           ),
-                          FollowerStats(data: 100, title: 'Buddies'),
+                          FollowerStats(data: mutuals.length, title: 'Mutuals'),
                         ],
                       ),
                     )
