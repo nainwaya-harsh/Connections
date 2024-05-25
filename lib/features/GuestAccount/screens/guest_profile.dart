@@ -1,3 +1,4 @@
+import 'package:connections/features/GuestAccount/services/following.dart';
 import 'package:connections/features/GuestAccount/widgets/follower_stats.dart';
 import 'package:connections/features/GuestAccount/widgets/friends_checkins.dart';
 import 'package:connections/features/GuestAccount/widgets/shared_moments.dart';
@@ -24,6 +25,7 @@ class _GuestProfileState extends State<GuestProfile> {
   List<String> selectedItems = ['Posts', 'Shared Moments'];
   bool isLocked=true;
  List<User> mutuals=[];
+  GuestService _guestService=GuestService();
   @override
   void initState() {
     // TODO: implement initState
@@ -123,7 +125,9 @@ class _GuestProfileState extends State<GuestProfile> {
                                         side: BorderSide(color: buttonColor),
                                         borderRadius:
                                             BorderRadius.circular(8))),
-                                onPressed: () {},
+                                onPressed: () {
+                                  _guestService.SendFollowing(context, widget.guest.id);
+                                },
                                 child: Text(
                                   isLocked == true
                                       ? 'Send Request'
