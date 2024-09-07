@@ -1,9 +1,19 @@
+import 'dart:developer';
+
 import 'package:connections/constants/colors.dart';
+import 'package:connections/constants/http_error_handle.dart';
+import 'package:connections/features/createEvent/screens/attend_event.dart';
+import 'package:connections/models/eventModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FriendsCheckins extends StatefulWidget {
-  const FriendsCheckins({super.key});
+  final String name;
+  final String place;
+  final String attendees;
+  final EventModel eventModel;
+   const FriendsCheckins({super.key,required this.name,  required this.place, required this.attendees,required this.eventModel});
+  
 
   @override
   State<FriendsCheckins> createState() => _FriendsCheckinsState();
@@ -40,7 +50,7 @@ class _FriendsCheckinsState extends State<FriendsCheckins> {
                             width: w * 0.03,
                           ),
                           Text(
-                            'Tushar Shah',
+                            widget.name,
                             style: GoogleFonts.nunito(
                                 fontSize: 14, fontWeight: FontWeight.w600),
                           ),
@@ -60,12 +70,21 @@ class _FriendsCheckinsState extends State<FriendsCheckins> {
                     // SizedBox(
                     //   width: w * 0.45,
                     // ),
-                    IconButton(
-                        onPressed: () {},
-                        icon: Image.asset(
-                          'assets/icons/threeDots.png',
-                          height: 24,
-                        ))
+          //           IconButton(
+          //               onPressed: () {
+          // //                 log('presses');
+          // //                 PopupMenuButton(itemBuilder: (context)=>[PopupMenuItem(child: Text("Go"),onTap: (){
+          // //  Navigator.pushNamed(
+          // //                                 context, EventAttendees.routeName,
+          // //                                 arguments: widget.eventModel);
+          // // },)]);
+          //               },
+          //               icon: Image.asset(
+          //                 'assets/icons/threeDots.png',
+          //                 height: 24,
+          //               ))
+
+          SizedBox(height: 45,width: 5,)
                   ],
                 ),
                 Row(
@@ -81,7 +100,7 @@ class _FriendsCheckinsState extends State<FriendsCheckins> {
                       width: 5,
                     ),
                     Text(
-                      'ShivaSoul Festival 2024',
+                      widget.place,
                       style: GoogleFonts.nunito(
                           color: buttonColor,
                           fontSize: 16,
@@ -135,7 +154,7 @@ class _FriendsCheckinsState extends State<FriendsCheckins> {
                       width: 8,
                     ),
                     Text(
-                      '2k+',
+                      widget.attendees,
                       style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
@@ -162,32 +181,39 @@ class _FriendsCheckinsState extends State<FriendsCheckins> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: h * 0.4,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(100))),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/icons/like.png',
-                              height: 20,
-                              color: buttonTextColor,
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              'Intrested',
-                              style: GoogleFonts.nunito(
-                                  color: buttonTextColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
-                            ),
-                          ],
+                    InkWell(
+                      onTap: () {
+                         Navigator.pushNamed(
+                                          context, EventAttendees.routeName,
+                                          arguments: widget.eventModel);
+                      },
+                      child: Container(
+                        width: h * 0.4,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(100))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/icons/like.png',
+                                height: 20,
+                                color: buttonTextColor,
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Text(
+                                'Intrested',
+                                style: GoogleFonts.nunito(
+                                    color: buttonTextColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

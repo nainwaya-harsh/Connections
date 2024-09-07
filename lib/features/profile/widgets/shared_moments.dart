@@ -1,14 +1,25 @@
 import 'package:connections/constants/colors.dart';
+import 'package:connections/features/createEvent/screens/attend_event.dart';
+import 'package:connections/models/eventModel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SharedMoments extends StatelessWidget {
-  const SharedMoments({super.key});
+  final EventModel event;
+  final bool isCreated;
+  const SharedMoments(
+      {super.key, required this.event, required this.isCreated});
 
   @override
   Widget build(BuildContext context) {
-   return Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
+      child: InkWell(
+        onTap: (){
+           Navigator.pushNamed(
+                                          context, EventAttendees.routeName,
+                                          arguments: event);
+        },
         child: Container(
           decoration: BoxDecoration(
               color: cardColor, borderRadius: BorderRadius.circular(16)),
@@ -17,16 +28,31 @@ class SharedMoments extends StatelessWidget {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset(
-                      'assets/images/person2.png',
-                      height: 20,
-                    ),
-                    Text(
-                      'You and tirth@yt2 shared moment at',
-                      style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w600, fontSize: 14),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 11,
+                        ),
+                        Image.asset(
+                          'assets/images/person2.png',
+                          height: 20,
+                        ),
+                        if(isCreated)
+                          Text(
+                          '   You Created ${event.ename} on ${event.edate}',
+                          style: GoogleFonts.nunito(
+                              fontWeight: FontWeight.w600, fontSize: 14),
+                        ),
+        
+                        if(!isCreated)
+                          Text(
+                          '   You attended ${event.ename} on ${event.edate}',
+                          style: GoogleFonts.nunito(
+                              fontWeight: FontWeight.w600, fontSize: 14),
+                        ),
+                      ],
                     ),
                     IconButton(
                         onPressed: () {},
@@ -49,7 +75,7 @@ class SharedMoments extends StatelessWidget {
                       width: 10,
                     ),
                     Text(
-                      'Arijit Singh Concert',
+                      event.ecity,
                       style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w600, fontSize: 16),
                     ),
@@ -59,6 +85,7 @@ class SharedMoments extends StatelessWidget {
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 }

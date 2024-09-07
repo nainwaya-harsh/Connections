@@ -45,8 +45,7 @@ eventRouter.post("/api/addUserToEvent",auth,async(req,res)=>{
         const {event_id,user_id}=req.body;
         const event=await Event.findById(event_id);
         const user=await User.findById(user_id);
-        // event.eguests.push(user);
-        event.eguests.push({ eguest: user });
+        event.eguests.push({ user_id });
         await event.save();
           res.json(event);
     } catch (error) {
@@ -59,12 +58,38 @@ eventRouter.post("/api/removeUserFromEvent",auth,async(req,res)=>{
         const{event_id,user_id}=req.body;
         const event=await Event.findById(event_id);
         const user=await User.findById(user_id);
-        event.eguests.pull({eguest:user});
+        event.eguests.pull({user_id});
         await event.save();
         res.json(event);
     } catch (error) {
         res.status(500).json({error:error.message});
     }
 })
+
+eventRouter.post("/api/event/eventallguest",auth,async(req,res)=>{
+    try {
+        const {eventguest}=req.body;
+        console.log(eventguest);
+        const users=await User.find({'_id':{$in:eventguest}});
+        res.json(users);
+
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
+eventRouter.post("/api/event/eventList",auth,async(req,res)=>{
+    try {
+        const {eventIds}=req.body;
+        const event=await Event.find({'_id':{$in:eventIds}});
+        res.json(event);
+
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
  
 module.exports=eventRouter; 

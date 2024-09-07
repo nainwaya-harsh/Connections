@@ -15,7 +15,14 @@ class GuestService{
             'Content-Type': 'application/json; charset=UTF-8','x-auth-token':userProvider.user.token
           },body: jsonEncode({'user_id':userProvider.user.id,'guest_id':guest_id}));
 
-        httpErrorHandle(response: res, context: context, onSuccess: ()=>showSnackBar(context,'Added Successfully'));
+        httpErrorHandle(response: res, context: context, onSuccess: () async {
+          showSnackBar(context,'Added Successfully');
+
+          
+         http.Response res2=await http.post(Uri.parse('$uri/api/sendNotification'),headers:<String, String>{
+            'Content-Type': 'application/json; charset=UTF-8','x-auth-token':userProvider.user.token
+          },body: jsonEncode({'notification':"${userProvider.user.fname} Added to Your Followers",'guest_id':guest_id}));
+        });
     } catch (e) {
       showSnackBar(context, e.toString());
           log(e.toString());

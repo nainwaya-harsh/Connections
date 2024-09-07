@@ -22,9 +22,15 @@ const userSchema=mongoose.Schema({
         required:true,
         type: String
     },
+    profile:{
+        type: String
+    },
     following:[],
     followers:[],
-    eventname:[]
+    eventcreated:[],
+    eventattended:[],
+    notification:[],
+
 })
 
 const User=mongoose.model("User",userSchema)

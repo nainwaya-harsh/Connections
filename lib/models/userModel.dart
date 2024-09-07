@@ -77,9 +77,12 @@ class User {
   final String mobilenumber;
   final String email;
   final String token;
-  final List<String> eventname;
+  final String profile;
+  final List<String> eventcreated;
+  final List<String> eventattended;
   final List<String> followers;
   final List<String> following;
+  final List<String> notification;
 
   User({
     required this.id,
@@ -88,9 +91,12 @@ class User {
     required this.password,
     required this.mobilenumber,
     required this.email,
-    required this.eventname,
+    required this.eventcreated,
+    required this.eventattended,
     required this.followers,
     required this.following,
+    required this.profile,
+    required this.notification,
     this.token = '',
   });
 
@@ -112,10 +118,26 @@ class User {
       password: map['password'],
       mobilenumber: map['mobilenumber'],
       email: map['email'],
+      profile: map['profile'],
       token: map['token'] ?? '',
-      eventname: List<String>.from(map['eventname']??[]),
-      followers:List<String>.from(map['followers']??[]),
-      following: List<String>.from(map['following']??[]),
+      eventcreated: map['eventcreated'] != null
+          ? List<String>.from((map['eventcreated'] as List).map((event)=>event['event_id'] ?? ''))
+          : [],
+      eventattended: map['eventattended'] != null
+          ? List<String>.from((map['eventattended'] as List).map((event)=>event['event_id'] ?? ''))
+          : [],
+      followers: map['followers'] != null
+          ? List<String>.from((map['followers'] as List)
+              .map((follower) => follower['user_id'] ?? ''))
+          : [],
+      following: map['following'] != null
+          ? List<String>.from((map['following'] as List)
+              .map((follow) => follow['guest_id'] ?? ''))
+          : [],
+      notification: map['notification'] != null
+          ? List<String>.from((map['notification'] as List)
+              .map((follow) => follow['notification'] ?? ''))
+          : [],
     );
   }
 
@@ -128,9 +150,12 @@ class User {
       'mobilenumber': mobilenumber,
       'email': email,
       'token': token,
-      'eventname':eventname,
+      'profile':profile,
+      'eventcreated':eventcreated,
+      'eventattended':eventattended,
       'followers':followers,
-      'following':following
+      'following':following,
+      'notification':notification
     };
   }
 

@@ -7,7 +7,7 @@ const auth=require('../middlewares/auth')
 // For creating account
 authRouter.post("/api/signup",async(req,res)=>{
     try {
-        const{fname,lname,mobilenumber,email,password,eventname,followers,following}=req.body;
+        const{fname,lname,mobilenumber,email,profile,password,eventcreated,eventattended,followers,following,notification}=req.body;
         const existingUser=await User.findOne({email});
         if(existingUser){
             res.status(400).json({msg:"User With Same email Found"})
@@ -19,9 +19,12 @@ authRouter.post("/api/signup",async(req,res)=>{
             email,
             password:hashedPassword,
             mobilenumber,
-            eventname,
+            profile,
+            eventcreated,
+            eventattended,
             followers,
-            following
+            following,
+            notification
         });
         user=await user.save();
         res.json(user)

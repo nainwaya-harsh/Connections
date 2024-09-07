@@ -1,7 +1,12 @@
 import 'package:connections/constants/colors.dart';
+import 'package:connections/features/authentication/services/auth_service.dart';
 import 'package:connections/features/home/widgets/friends_checkins.dart';
+import 'package:connections/features/profile/screens/followers.dart';
+import 'package:connections/features/profile/screens/following.dart';
+import 'package:connections/features/profile/services/eventData.dart';
 import 'package:connections/features/profile/widgets/follower_stats.dart';
 import 'package:connections/features/profile/widgets/shared_moments.dart';
+import 'package:connections/models/eventModel.dart';
 import 'package:connections/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,15 +21,39 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isLocked = true;
-  String selectedItem = 'Posts';
-  List<String> selectedItems = ['Posts', 'Shared Moments'];
+  EventData _eventData=EventData();
+  bool isLocked = false;
+  String selectedItem = 'Events Attended';
+  List<String> selectedItems = ['Events Attended', 'Events Created'];
+  List<EventModel>? eventAttended=[];
+  List<EventModel>? eventCreated;
+ 
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getEventAttendedList();
+  }
+
+  void _getEventAttendedList() async{
+    final userProvider=Provider.of<UserProvider>(context,listen: false);
+    // List<EventModel> l=await _eventData.eventsList(context, userProvider.user.eventattended);
+    eventAttended= await _eventData.eventsList(context, userProvider.user.eventattended);;
+    eventCreated= await _eventData.eventsList(context, userProvider.user.eventcreated);
+    setState(() {
+      
+    });
+    
+  } 
+  @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
+   final user = Provider.of<UserProvider>(context).user;
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
+
+  
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -34,10 +63,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           scale: 4.5,
         ),
         actions: [
-          Image.asset(
-            'assets/icons/threeDots.png',
-            width: 27,
-          ),
+          // Image.asset(
+          //   'assets/icons/threeDots.png',
+          //   width: 27,
+          // ),
+          PopupMenuButton(itemBuilder: (context)=>[PopupMenuItem(child: Text("LogOut"),onTap: (){
+            AuthService _authService=AuthService();
+            _authService.logOut(context);
+          },)]),
           SizedBox(
             width: 10,
           )
@@ -98,28 +131,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.w500, fontSize: 16),
                           ),
-                          if (isLocked)
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    elevation: 0,
-                                    backgroundColor:
-                                        isLocked ? buttonColor : Colors.white,
-                                    minimumSize: Size(123, 34),
-                                    shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: buttonColor),
-                                        borderRadius:
-                                            BorderRadius.circular(8))),
-                                onPressed: () {},
-                                child: Text(
-                                  isLocked == true
-                                      ? 'Send Request'
-                                      : 'Unfollow',
-                                  style: TextStyle(
-                                      color:
-                                          isLocked ? Colors.white : buttonColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                )),
+                          // if (isLocked)
+                          //   ElevatedButton(
+                          //       style: ElevatedButton.styleFrom(
+                          //           elevation: 0,
+                          //           backgroundColor:
+                          //               isLocked ? buttonColor : Colors.white,
+                          //           minimumSize: Size(123, 34),
+                          //           shape: RoundedRectangleBorder(
+                          //               side: BorderSide(color: buttonColor),
+                          //               borderRadius:
+                          //                   BorderRadius.circular(8))),
+                          //       onPressed: () {},
+                          //       child: Text(
+                          //         isLocked == true
+                          //             ? 'Send Request'
+                          //             : 'Unfollow',
+                          //         style: TextStyle(
+                          //             color:
+                          //                 isLocked ? Colors.white : buttonColor,
+                          //             fontSize: 14,
+                          //             fontWeight: FontWeight.w600),
+                          //       )),
+                          SizedBox(height: 13,),
+                          Text('Software Engineering || Keen Learner \n GGSIPU Delhi',style: GoogleFonts.aBeeZee(fontSize: 17),textAlign: TextAlign.center,)
                         ],
                       ),
                     ),
@@ -130,15 +165,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(
                             width: w * 0.12,
                           ),
-                          FollowerStats(data: 100, title: 'Buddies'),
+                          InkWell(onTap: (){
+                            Navigator.pushNamed(context, Followers.routeName);
+                          },child: FollowerStats(data: user.followers.length, title: 'Followers')),
                           SizedBox(
                             width: w * 0.12,
                           ),
-                          FollowerStats(data: 100, title: 'Buddies'),
+                          InkWell(onTap: (){
+                            Navigator.pushNamed(context, Following.routeName);
+                          },child: FollowerStats(data: user.following.length, title: 'Following')),
                           SizedBox(
                             width: w * 0.12,
                           ),
-                          FollowerStats(data: 100, title: 'Buddies'),
+                          FollowerStats(data: (user.eventattended.length+user.eventcreated.length), title: 'Total Events'),
                         ],
                       ),
                     )
@@ -164,14 +203,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ? Colors.black
                                     : Colors.white,
                                 borderRadius: BorderRadius.circular(10.0),
-                                // border: Border.all(
-                                //   color: selectedItem == category
-                                //       ? Colors.black
-                                //       : Colors.white,
-                                //   width: 3.0,
-                                // ),
-                                // border: Border(
-                                //     bottom: BorderSide(color: Colors.black, width: 10))
                               ),
                             ),
                             Container(
@@ -196,43 +227,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   }).toList(),
                 ),
-                // Obx(() {
-                //   if(isLocked){
-                //     return
-                //   }
-                // }),
-                if (selectedItem == 'Posts' && isLocked)
-                  InkWell(
-                    onTap: () {
-                      print(isLocked);
-                      print('tapped');
-                      isLocked = false;
-                      setState(() {});
-                    },
-                    child: Container(
-                      child: Image.asset(
-                        'assets/icons/profile_locked.png',
-                        height: 140,
-                      ),
-                    ),
-                  ),
+                if (selectedItem == 'Events Attended')
+                    eventAttended==null?CircularProgressIndicator():ListView.builder(itemCount: eventAttended!.length,shrinkWrap: true,itemBuilder: (context,index){
+                      return SharedMoments(event: eventAttended![index],isCreated: false,);
+                    }),
 
-                if (selectedItem == 'Posts' && !isLocked)
-                  Column(
-                    children: [
-                      FriendsCheckins(),
-                      FriendsCheckins(),
-                    ],
-                  ),
+                if (selectedItem == 'Events Created')
+                  eventCreated==null?CircularProgressIndicator():ListView.builder(shrinkWrap: true,itemCount: eventCreated!.length,itemBuilder: (context,index){
+                      return SharedMoments(event: eventCreated![index],isCreated: true,);
+                    }),
 
-                if (selectedItem == 'Shared Moments' && !isLocked)
-                  Column(
-                    children: [
-                      SharedMoments(),
-                      SharedMoments(),
-                      SharedMoments(),
-                    ],
-                  ),
               ],
             ),
           ),

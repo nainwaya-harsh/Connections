@@ -24,7 +24,8 @@ class AuthService {
           password: password,
           mobilenumber: mobilenumber,
           email: email,
-          token: '', eventname: [], followers: [], following: []);
+          profile:'',
+          token: '', eventcreated: [],eventattended: [], followers: [], following: [],notification: []);
       print('15454');
       http.Response res = await http.post(Uri.parse('$uri/api/signup'),
           body: user.toJson(),
@@ -135,5 +136,18 @@ class AuthService {
       showSnackBar(context, e.toString());
       log(e.toString());
     }
+  }
+
+
+  void logOut(BuildContext context) async{
+
+    try {
+      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
+    await sharedPreferences.setString('x-auth-token', '');
+    Navigator.pushNamedAndRemoveUntil(context, LandingScreen.routeName, (route)=>false);
+    } catch (e) {
+      showSnackBar(context, 'Failed To Log Out');
+    }
+    
   }
 }

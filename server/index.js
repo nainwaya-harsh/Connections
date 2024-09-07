@@ -15,7 +15,7 @@ app.use(userRouter);
 // Connections To Database
 const DB = "mongodb://localhost:27017/ConnectionsApp";
 mongoose.connect(DB).then(() => { console.log('Connection Succesful to Database'); }).catch((e) => { console.log("Connection Unuccesful to Database"); })
-
+ 
 // For Testing Purpose
 app.get("/hello", (req, res) => {
     res.status(200).json({ msg: "helllo" })

@@ -6,6 +6,10 @@ import 'package:connections/features/authentication/screens/signup.dart';
 import 'package:connections/features/authentication/screens/user_details.dart';
 import 'package:connections/features/createEvent/screens/attend_event.dart';
 import 'package:connections/features/home/screens/home_screen.dart';
+import 'package:connections/features/notification/screens/notification.dart';
+import 'package:connections/features/profile/screens/followers.dart';
+import 'package:connections/features/profile/screens/following.dart';
+import 'package:connections/features/search/screens/search_screen.dart';
 import 'package:connections/models/eventModel.dart';
 import 'package:flutter/material.dart';
 
@@ -32,6 +36,14 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
     case GuestProfile.routeName:
     var guest=routeSettings.arguments as User;
       return MaterialPageRoute(builder: (_) =>  GuestProfile(guest: guest,));
+    case Followers.routeName:
+      return MaterialPageRoute(builder: (_) =>  Followers());
+    case Following.routeName:
+      return MaterialPageRoute(builder: (_) =>  Following());
+    case SearchScreen.routeName:
+      return MaterialPageRoute(builder: (_) =>  SearchScreen());
+    case NotificationScreen.routeName:
+      return MaterialPageRoute(builder: (_) =>  NotificationScreen());
     default:
       return MaterialPageRoute(
           builder: (_) => const Scaffold(

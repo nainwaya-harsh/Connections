@@ -22,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Simulate some initialization or loading process
     Future.delayed(Duration(seconds: 2), () {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
+      // ignore: unnecessary_null_comparison
       if (userProvider.user != null && userProvider.user.token.isNotEmpty) {
         Navigator.pushNamedAndRemoveUntil(
             context, BottomNavigation.routeName, (route) => false);

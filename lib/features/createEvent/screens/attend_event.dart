@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:connections/constants/colors.dart';
 import 'package:connections/features/GuestAccount/screens/guest_profile.dart';
 import 'package:connections/features/createEvent/services/event.dart';
 import 'package:connections/models/eventModel.dart';
+import 'package:connections/models/userModel.dart';
 import 'package:connections/provider/event_provider.dart';
 import 'package:connections/provider/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +26,22 @@ class EventAttendees extends StatefulWidget {
 class _EventAttendeesState extends State<EventAttendees> {
   EventService _eventService = EventService();
   bool attendingEvent = false;
+  List<User>? guestDetailList;
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getEventGuestList();
+  }
+
+  void getEventGuestList ()async{
+    await _eventService.eventAllGuest(widget.event.id, widget.event.eguests, context);
+    setState(() {
+      guestDetailList=_eventService.eventGuests;
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     final eventProvider = Provider.of<EventProvider>(context, listen: false);
@@ -31,16 +50,20 @@ class _EventAttendeesState extends State<EventAttendees> {
         .where((event) => event.ename == widget.event.ename)
         .first;
     for(int i=0;i<_eventModel!.eguests.length;i++){
-      if(_eventModel.eguests[i].fname==userProvider.user.fname){
+      if(guestDetailList?[i].fname==userProvider.user.fname){
           attendingEvent=true;
           break;
       }
     }
     void addUserToEvent() {
+      print('AdduserEventFunc');
       _eventService.addUserEvent(context: context, eventModel: widget.event);
+      print(_eventModel.eguests.length);
+      log('Add user to event working');
     }
     void removeUserFromEvent() {
       _eventService.removeUserFromEvent(context: context, eventModel: widget.event);
+      log('Remove user from event working');
     }
 
     return Scaffold(
@@ -108,8 +131,9 @@ class _EventAttendeesState extends State<EventAttendees> {
           Expanded(
               child: ListView.builder(
                   itemCount: _eventModel.eguests.length,
+                  
                   itemBuilder: (context, index) {
-                      if(_eventModel.eguests[index].fname==userProvider.user.fname){
+                      if(guestDetailList?[index].fname==userProvider.user.fname){
                         return null;
                       }
                       
@@ -124,10 +148,10 @@ class _EventAttendeesState extends State<EventAttendees> {
                             size: 45,
                           ),
                         ),
-                        title: Text(_eventModel.eguests[index].fname,
+                        title: Text(guestDetailList![index].fname,
                             style: GoogleFonts.aBeeZee(fontSize: 20)),
                             trailing: Container(height:30,width: 130,child: customButton(title: 'Follow', ontap: (){
-                              Navigator.pushNamed(context, GuestProfile.routeName,arguments: _eventModel.eguests[index]);
+                              Navigator.pushNamed(context, GuestProfile.routeName,arguments: guestDetailList?[index]);
                             })),
                       ),
                     );

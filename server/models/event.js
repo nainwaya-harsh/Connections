@@ -25,11 +25,7 @@ const eventSchema=mongoose.Schema({
         required:true,
         type:String
     },
-    eguests:[
-        {
-            eguest:userSchema
-        },
-    ]
+    eguests:[]
 })
 
 const Event=mongoose.model("Event",eventSchema)
