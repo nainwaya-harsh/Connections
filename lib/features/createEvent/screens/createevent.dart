@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:connections/common/widgets/bottom_navigation.dart';
 import 'package:connections/common/widgets/common_button.dart';
 import 'package:connections/common/widgets/textform.dart';
 import 'package:connections/constants/colors.dart';
+import 'package:connections/constants/http_error_handle.dart';
 import 'package:connections/features/createEvent/services/event.dart';
 import 'package:connections/features/home/screens/home_screen.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class CreateEvent extends StatefulWidget {
@@ -23,14 +27,37 @@ class _CreateEventState extends State<CreateEvent> {
   final TextEditingController _eventDescController = TextEditingController();
   final _form=GlobalKey<FormState>();
   EventService _eventService=EventService();
+File? eventPhoto;
+
+ void selectImages() async {
+    var res = await pickImages();
+    setState(() {
+      eventPhoto = res;
+    });
+  }
+
+  Future<File> pickImages() async {
+  late File images;
+  try {
+    var files = await FilePicker.platform
+        .pickFiles(type: FileType.image, allowMultiple: false);
+    if (files != null && files.files != null) {
+      images=File(files.files[0].path!);
+    }
+  } catch (e) {
+    debugPrint(e.toString());
+  }
+  return images;
+}
+
 
   void createEvent(){
 
     try {
-       _eventService.createEvent(context, _eventNameController.text.toString(), _eventDateController.text.toString(), _eventTimeController.text.toString(), _eventCityController.text.toString(), _eventAddressController.text.toString(), _eventNumberController.text.toString());
+       _eventService.createEvent(context, _eventNameController.text.toString(), _eventDateController.text.toString(), _eventTimeController.text.toString(), _eventCityController.text.toString(), _eventAddressController.text.toString(), _eventNumberController.text.toString(),eventPhoto!);
       
     } catch (e) {
-      
+      showSnackBar(context, e.toString());
     }
     
   }
@@ -71,10 +98,17 @@ class _CreateEventState extends State<CreateEvent> {
               SizedBox(
                 height: 40,
               ),
-              Container(
-                height: 160,
-                width: double.infinity,
-                color: lightGrey,
+              InkWell(
+                onTap: (){
+                  selectImages();
+                },
+                child: Container(
+                  height: 160,
+                  width: double.infinity,
+                  color:eventPhoto==null? lightGrey:null,
+                  // decoration: BoxDecoration(),
+                  child: eventPhoto==null?Icon(Icons.add_a_photo_outlined) :Image.file(eventPhoto!),
+                ),
               ),
               SizedBox(
                 height: 10,

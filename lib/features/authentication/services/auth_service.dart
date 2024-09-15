@@ -24,8 +24,17 @@ class AuthService {
           password: password,
           mobilenumber: mobilenumber,
           email: email,
-          profile:'',
-          token: '', eventcreated: [],eventattended: [], followers: [], following: [],notification: []);
+          profile: '',
+          token: '',
+          description: '',
+          linkedin: '',
+          whatsapp: '',
+          contact: '',
+          eventcreated: [],
+          eventattended: [],
+          followers: [],
+          following: [],
+          notification: []);
       print('15454');
       http.Response res = await http.post(Uri.parse('$uri/api/signup'),
           body: user.toJson(),
@@ -60,7 +69,8 @@ class AuthService {
           context: context,
           onSuccess: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
-            Provider.of<UserProvider>(context, listen: false).setUser(json.decode(res.body));
+            Provider.of<UserProvider>(context, listen: false)
+                .setUser(json.decode(res.body));
             await prefs.setString(
                 'x-auth-token', jsonDecode(res.body)['token']);
             showSnackBar(context, 'Succesfully Logged In');
@@ -138,16 +148,15 @@ class AuthService {
     }
   }
 
-
-  void logOut(BuildContext context) async{
-
+  void logOut(BuildContext context) async {
     try {
-      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
-    await sharedPreferences.setString('x-auth-token', '');
-    Navigator.pushNamedAndRemoveUntil(context, LandingScreen.routeName, (route)=>false);
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      await sharedPreferences.setString('x-auth-token', '');
+      Navigator.pushNamedAndRemoveUntil(
+          context, LandingScreen.routeName, (route) => false);
     } catch (e) {
       showSnackBar(context, 'Failed To Log Out');
     }
-    
   }
 }

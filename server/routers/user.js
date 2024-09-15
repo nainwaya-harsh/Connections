@@ -101,6 +101,40 @@ userRouter.post("/api/clearNotification",auth,async(req,res)=>{
     }
 })
 
+userRouter.post("/api/user/editdetails",auth,async(req,res)=>{
+    try {
+        const{fname,lname,email,mobilenumber,description,linkedin,whatsapp,contact,user_id}=req.body;
+        const user=await User.findById(user_id);
+        user.fname=fname;
+        user.lname=lname;
+        user.email=email;
+        user.mobilenumber=mobilenumber;
+        user.description=description;
+        user.linkedin=linkedin;
+        user.whatsapp=whatsapp;
+        user.contact=contact;
+        await user.save();
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+})
+
+
+userRouter.post("/api/user/profilephotoupdated",auth,async(req,res)=>{
+    try {
+        const{profile,user_id}=req.body;
+        const user=await User.findById(user_id);
+        user.profile=profile;
+        await user.save();
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+})
+
+
+
 
 
 module.exports=userRouter;

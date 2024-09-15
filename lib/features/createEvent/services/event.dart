@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:connections/common/widgets/bottom_navigation.dart';
 import 'package:connections/constants/http_error_handle.dart';
 import 'package:connections/features/notification/services/notification_service.dart';
@@ -16,12 +18,18 @@ import 'package:http/http.dart' as http;
 
 class EventService {
   void createEvent(BuildContext context, String ename, String edate,
-      String etime, String ecity, String eaddress, enumber) async {
+      String etime, String ecity, String eaddress, enumber,File eimage) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     try {
+      final cloudinary = CloudinaryPublic('dtjoiiigz', 'lievwxsp');
+      String imgUrl='';
+      CloudinaryResponse res = await cloudinary
+            .uploadFile(CloudinaryFile.fromFile(eimage.path, folder: ename));
+      imgUrl=res.secureUrl;
       EventModel event = EventModel(
           id: '',
           ename: ename,
+          ephoto: imgUrl,
           edate: edate,
           etime: etime,
           ecity: ecity,

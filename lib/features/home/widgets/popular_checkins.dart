@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 class PopularCheckins extends StatefulWidget {
   final String eventName;
   final String attendees;
-  const PopularCheckins({super.key, required this.eventName, required this.attendees});
+  final String imgUrl;
+  const PopularCheckins({super.key, required this.eventName, required this.attendees,required this.imgUrl});
 
   @override
   State<PopularCheckins> createState() => _PopularCheckinsState();
@@ -24,10 +25,14 @@ class _PopularCheckinsState extends State<PopularCheckins> {
             child: Row(
               children: [
                 Container(
-                  child: Image.asset(
-                    'assets/images/arijit1.png',
-                    height: 80,
-                    width: 80,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      widget.imgUrl,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 SizedBox(

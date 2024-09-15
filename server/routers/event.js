@@ -7,7 +7,7 @@ const auth=require("../middlewares/auth")
 
 eventRouter.post("/api/event",async (req,res)=>{
     try {
-        const {ename,edate,etime,ecity,eaddress,enumber,eguests}=req.body;
+        const {ename,edate,etime,ecity,eaddress,enumber,eguests,ephoto}=req.body;
 
         const exisitingEvent=await Event.findOne({ename});
         if(exisitingEvent){
@@ -16,6 +16,7 @@ eventRouter.post("/api/event",async (req,res)=>{
 
         let event=new Event({
             ename,
+            ephoto,
             edate,
             etime,
             ecity, 

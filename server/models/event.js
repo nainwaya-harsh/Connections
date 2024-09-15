@@ -5,6 +5,9 @@ const eventSchema=mongoose.Schema({
         required:true,
         type:String
     },
+    ephoto:{
+        type:String
+    },
     edate:{
         required:true,
         type:String

@@ -174,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       eventName: event.ename,
                                       attendees:
                                           event.eguests.length.toString(),
+                                          imgUrl: event.ephoto,
                                     ));
                               }),
                         ),

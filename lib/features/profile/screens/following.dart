@@ -59,11 +59,11 @@ List<User>? followingUsers=[];
         itemBuilder: (context, index) {
           User user = followingUsers![index];
           return ListTile(
-            leading: CircleAvatar(),
+            leading: user.profile==''? CircleAvatar(radius: 40,backgroundImage: AssetImage('assets/images/person1.png')) : CircleAvatar(radius: 40,backgroundImage: NetworkImage(user.profile)),
             title: Text('${user.fname} ${user.lname}'),
             subtitle: Text(user.email),
-            trailing: Container(height:30,width: 130,
-              child: customButton(title: 'Follow', ontap: (){
+            trailing: Container(height:30,width: 140,
+              child: customButton(title: 'Following', ontap: (){
                                 Navigator.pushNamed(context, GuestProfile.routeName,arguments: followingUsers?[index]);
                               }),
             )

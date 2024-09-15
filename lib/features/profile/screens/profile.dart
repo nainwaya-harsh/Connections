@@ -1,13 +1,18 @@
+import 'dart:io';
+import 'dart:developer';
 import 'package:connections/constants/colors.dart';
 import 'package:connections/features/authentication/services/auth_service.dart';
 import 'package:connections/features/home/widgets/friends_checkins.dart';
 import 'package:connections/features/profile/screens/followers.dart';
 import 'package:connections/features/profile/screens/following.dart';
 import 'package:connections/features/profile/services/eventData.dart';
+import 'package:connections/features/profile/services/profile_data.dart';
+import 'package:connections/features/profile/widgets/bottomSheet.dart';
 import 'package:connections/features/profile/widgets/follower_stats.dart';
 import 'package:connections/features/profile/widgets/shared_moments.dart';
 import 'package:connections/models/eventModel.dart';
 import 'package:connections/provider/user_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<String> selectedItems = ['Events Attended', 'Events Created'];
   List<EventModel>? eventAttended=[];
   List<EventModel>? eventCreated;
+  File? profilePhoto;
  
 
   @override
@@ -39,13 +45,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _getEventAttendedList() async{
     final userProvider=Provider.of<UserProvider>(context,listen: false);
     // List<EventModel> l=await _eventData.eventsList(context, userProvider.user.eventattended);
-    eventAttended= await _eventData.eventsList(context, userProvider.user.eventattended);;
+    eventAttended= await _eventData.eventsList(context, userProvider.user.eventattended);
     eventCreated= await _eventData.eventsList(context, userProvider.user.eventcreated);
     setState(() {
       
     });
     
   } 
+
+
+  void _modalBottomSheetMenu(){
+    
+        showModalBottomSheet(
+          isScrollControlled: true,
+          showDragHandle: true,
+            context: context,
+            builder: (builder){
+              return CustomBottomSheet();
+            }
+        );
+      }
+
+      void selectImages() async {
+        ProfileData profileData=ProfileData();
+    var res = await pickImages();
+    setState(() {
+      profilePhoto = res;
+    });
+    profileData.saveProfile(profilePhoto!, context);
+  }
+
+  Future<File> pickImages() async {
+  late File images;
+  try {
+    var files = await FilePicker.platform
+        .pickFiles(type: FileType.image, allowMultiple: false);
+    if (files != null && files.files != null) {
+      images=File(files.files[0].path!);
+    }
+  } catch (e) {
+    debugPrint(e.toString());
+  }
+  return images;
+}
   @override
   Widget build(BuildContext context) {
    final user = Provider.of<UserProvider>(context).user;
@@ -67,10 +109,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           //   'assets/icons/threeDots.png',
           //   width: 27,
           // ),
-          PopupMenuButton(itemBuilder: (context)=>[PopupMenuItem(child: Text("LogOut"),onTap: (){
+          PopupMenuButton(itemBuilder: (context)=>[PopupMenuItem(child: Text("Update Profile"),onTap: (){_modalBottomSheetMenu();},),PopupMenuItem(child: Text("LogOut"),onTap: (){
             AuthService _authService=AuthService();
             _authService.logOut(context);
-          },)]),
+          },),]),
           SizedBox(
             width: 10,
           )
@@ -120,7 +162,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // SizedBox(
                           //   height: 30,
                           // ),
-                          Image.asset('assets/images/person1.png'),
+                          Stack(
+                            children: [
+                              Container(width: 90,height: 90,),
+                            if(user.profile!='') CircleAvatar(radius: 40,backgroundImage: NetworkImage(user.profile)) else if (profilePhoto==null) Image.asset('assets/images/person1.png') else CircleAvatar(radius: 40,backgroundImage: FileImage(profilePhoto!)),
+                              Positioned(right:0,bottom:0,child: IconButton(onPressed: (){
+                                selectImages();
+                              }, icon: Icon(Icons.add_circle,color: buttonColor,)))
+                            ],
+                          ),
                           Text(
                             user.fname,
                             style: GoogleFonts.nunito(
@@ -154,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           //             fontWeight: FontWeight.w600),
                           //       )),
                           SizedBox(height: 13,),
-                          Text('Software Engineering || Keen Learner \n GGSIPU Delhi',style: GoogleFonts.aBeeZee(fontSize: 17),textAlign: TextAlign.center,)
+                          Text(user.description,style: GoogleFonts.aBeeZee(fontSize: 17),textAlign: TextAlign.center,)
                         ],
                       ),
                     ),

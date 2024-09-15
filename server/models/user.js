@@ -25,6 +25,18 @@ const userSchema=mongoose.Schema({
     profile:{
         type: String
     },
+    description:{
+        type: String
+    },
+    linkedin:{
+        type: String
+    },
+    whatsapp:{
+        type: String
+    },
+    contact:{
+        type: String
+    },
     following:[],
     followers:[],
     eventcreated:[],

@@ -2,11 +2,16 @@ import 'package:connections/features/GuestAccount/services/following.dart';
 import 'package:connections/features/GuestAccount/widgets/follower_stats.dart';
 import 'package:connections/features/GuestAccount/widgets/friends_checkins.dart';
 import 'package:connections/features/GuestAccount/widgets/shared_moments.dart';
+import 'package:connections/features/profile/services/eventData.dart';
+import 'package:connections/models/eventModel.dart';
 import 'package:connections/models/userModel.dart';
+import 'package:connections/provider/user_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/colors.dart';
 import '../../../provider/user_provider.dart';
@@ -21,15 +26,102 @@ class GuestProfile extends StatefulWidget {
 }
 
 class _GuestProfileState extends State<GuestProfile> {
-  String selectedItem = 'Posts';
-  List<String> selectedItems = ['Posts', 'Shared Moments'];
+  EventData _eventData=EventData();
+  String selectedItem = 'Connect';
+  List<String> selectedItems = ['Connect', 'Shared Moments'];
   bool isLocked=true;
+  List<EventModel> sharedEvent=[];
+  List<String> sharedEventIds=[];
  List<User> mutuals=[];
   GuestService _guestService=GuestService();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkisFollowing();
+    sharedEventFunc();
+    getEventDetails(context,sharedEventIds);
+  }
+
+  void getEventDetails(BuildContext context,List<String> eventsIds) async{
+    List<EventModel> l=await _eventData.eventsList(context, eventsIds);
+    setState(() {
+      sharedEvent=l;
+    });
+  }
+
+    void sharedEventFunc(){
+      final userProvider=Provider.of<UserProvider>(context,listen: false);
+      List<String> guestEventList=widget.guest.eventattended;
+      List<String> userEventList=userProvider.user.eventattended;
+      for(int i=0;i<guestEventList.length;i++){
+        String guestEvent=guestEventList[i];
+        for(int j=0;j<userEventList.length;j++){
+          if(guestEvent==userEventList[j]){
+            sharedEventIds!.add(guestEvent);
+          }
+        }
+      }
+      return;
+      
+    }
+   void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Widget connectTile(String text,String url,String iconUrl){
+    return Visibility(
+      visible: url==''?false:true,
+      child: Padding(
+          padding: const EdgeInsets.only(top: 5,left: 5,right: 5),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              leading: CircleAvatar(
+                backgroundColor: Colors.blue,
+                // child: Icon(Icons.person, color: Colors.white),
+                child: Image.asset(iconUrl),
+              ),
+              title: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                url,
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.open_in_new, color: Colors.blue),
+                onPressed: () => _launchURL(url),
+              ),
+            ),
+          ),
+        ),
+    );
+  }
+
+  void checkisFollowing(){
+    final userProvider=Provider.of<UserProvider>(context,listen: false);
+      for(int i=0;i<userProvider.user.following.length;i++){
+        if(userProvider.user.following[i]==widget.guest.id){
+          isLocked=false;
+          break;
+        }
+      }
   }
   @override
   Widget build(BuildContext context) {
@@ -103,7 +195,8 @@ class _GuestProfileState extends State<GuestProfile> {
                           // SizedBox(
                           //   height: 30,
                           // ),
-                          Image.asset('assets/images/person1.png'),
+                          // Image.asset('assets/images/person1.png'),
+                          if(widget.guest.profile!='') CircleAvatar(radius: 40,backgroundImage: NetworkImage(widget.guest.profile)) else Image.asset('assets/images/person1.png') ,
                           Text(
                             widget.guest.fname,
                             style: GoogleFonts.nunito(
@@ -114,7 +207,12 @@ class _GuestProfileState extends State<GuestProfile> {
                             style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.w500, fontSize: 16),
                           ),
-                          if (isLocked)
+                          Text(
+                           widget.guest.description,
+                            style: GoogleFonts.nunito(
+                                fontWeight: FontWeight.w500, fontSize: 16),
+                          ),
+                          // if (isLocked)
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     elevation: 0,
@@ -127,6 +225,8 @@ class _GuestProfileState extends State<GuestProfile> {
                                             BorderRadius.circular(8))),
                                 onPressed: () {
                                   _guestService.SendFollowing(context, widget.guest.id);
+                                 isLocked = false;
+                      setState(() {});
                                 },
                                 child: Text(
                                   isLocked == true
@@ -157,7 +257,7 @@ class _GuestProfileState extends State<GuestProfile> {
                           SizedBox(
                             width: w * 0.12,
                           ),
-                          FollowerStats(data: mutuals.length, title: 'Mutuals'),
+                          FollowerStats(data: (widget.guest.eventattended.length+widget.guest.eventcreated.length), title: 'Events'),
                         ],
                       ),
                     )
@@ -183,14 +283,6 @@ class _GuestProfileState extends State<GuestProfile> {
                                     ? Colors.black
                                     : Colors.white,
                                 borderRadius: BorderRadius.circular(10.0),
-                                // border: Border.all(
-                                //   color: selectedItem == category
-                                //       ? Colors.black
-                                //       : Colors.white,
-                                //   width: 3.0,
-                                // ),
-                                // border: Border(
-                                //     bottom: BorderSide(color: Colors.black, width: 10))
                               ),
                             ),
                             Container(
@@ -215,18 +307,11 @@ class _GuestProfileState extends State<GuestProfile> {
                     );
                   }).toList(),
                 ),
-                // Obx(() {
-                //   if(isLocked){
-                //     return
-                //   }
-                // }),
-                if (selectedItem == 'Posts' && isLocked)
+                if (isLocked)
                   InkWell(
                     onTap: () {
                       print(isLocked);
                       print('tapped');
-                      isLocked = false;
-                      setState(() {});
                     },
                     child: Container(
                       child: Image.asset(
@@ -236,22 +321,21 @@ class _GuestProfileState extends State<GuestProfile> {
                     ),
                   ),
 
-                if (selectedItem == 'Posts' && !isLocked)
-                  Column(
-                    children: [
-                      FriendsCheckins(),
-                      FriendsCheckins(),
-                    ],
+                if (selectedItem == 'Connect' && !isLocked)
+                  Container(
+                    child: Column(
+                      children: [
+                       connectTile('Linkedn', widget.guest.linkedin,'assets/icons/linkedin.png'),
+                       connectTile('Whatsapp', widget.guest.whatsapp,'assets/icons/whatsapp.png'),
+                       connectTile('Others', widget.guest.contact,'assets/icons/chat.png'),
+                      ],
+                    ),
                   ),
 
                 if (selectedItem == 'Shared Moments' && !isLocked)
-                  Column(
-                    children: [
-                      SharedMoments(),
-                      SharedMoments(),
-                      SharedMoments(),
-                    ],
-                  ),
+                  sharedEvent==null?CircularProgressIndicator():ListView.builder(shrinkWrap: true,itemCount: sharedEvent!.length,itemBuilder: (context,index){
+                      return SharedMoments(guestName: widget.guest.fname, eventlocation: sharedEvent[index].ecity,);
+                    }),
               ],
             ),
           ),

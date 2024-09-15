@@ -78,6 +78,10 @@ class User {
   final String email;
   final String token;
   final String profile;
+  final String description;
+  final String linkedin;
+  final String whatsapp;
+  final String contact;
   final List<String> eventcreated;
   final List<String> eventattended;
   final List<String> followers;
@@ -97,6 +101,10 @@ class User {
     required this.following,
     required this.profile,
     required this.notification,
+    required this.description,
+    required this.linkedin,
+    required this.whatsapp,
+    required this.contact,
     this.token = '',
   });
 
@@ -119,6 +127,10 @@ class User {
       mobilenumber: map['mobilenumber'],
       email: map['email'],
       profile: map['profile'],
+      description: map['description'],
+      linkedin: map['linkedin'],
+      whatsapp: map['whatsapp'],
+      contact: map['contact'],
       token: map['token'] ?? '',
       eventcreated: map['eventcreated'] != null
           ? List<String>.from((map['eventcreated'] as List).map((event)=>event['event_id'] ?? ''))
@@ -151,6 +163,10 @@ class User {
       'email': email,
       'token': token,
       'profile':profile,
+      'description':description,
+      'linkedin':linkedin,
+      'whatsapp':whatsapp,
+      'contact':contact,
       'eventcreated':eventcreated,
       'eventattended':eventattended,
       'followers':followers,

@@ -32,7 +32,7 @@ class _FollowersState extends State<Followers> {
   }
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
+    final userProvider = Provider.of<UserProvider>(context,listen: false).user;
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
     
@@ -47,7 +47,7 @@ class _FollowersState extends State<Followers> {
             scale: 4.5,
           ),
         ),
-        title: Text('Following'),
+        title: Text('Followers'),
         centerTitle: true,
       ),
 
@@ -55,12 +55,19 @@ class _FollowersState extends State<Followers> {
         itemCount: followersUsers!.length,
         itemBuilder: (context, index) {
           User user = followersUsers![index];
+          bool isFollowing=false;
+          if(userProvider.following.contains(user.id)){
+            isFollowing=true;
+          }
+          // for(int i=0;i<userProvider.following.length;i++){
+          //   if(userProvider.following[index]==user.id)
+          // }
           return ListTile(
-            leading: CircleAvatar(),
+            leading: user.profile==''? CircleAvatar(radius: 40,backgroundImage: AssetImage('assets/images/person1.png')) : CircleAvatar(radius: 40,backgroundImage: NetworkImage(user.profile)),
             title: Text('${user.fname} ${user.lname}'),
             subtitle: Text(user.email),
-            trailing: Container(height:30,width: 130,
-              child: customButton(title: 'Follow', ontap: (){
+            trailing: Container(height:30,width: 140,
+              child: customButton(title: isFollowing?'Following': 'Follow', ontap: (){
                                 Navigator.pushNamed(context, GuestProfile.routeName,arguments: followersUsers?[index]);
                               }),
             )

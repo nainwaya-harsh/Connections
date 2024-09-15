@@ -9,10 +9,12 @@ class EventModel {
   final String ecity;
   final String eaddress;
   final String enumber;
+  final String ephoto;
   final List<String> eguests;
 
   EventModel({
     required this.id,
+    required this.ephoto,
     required this.ename,
     required this.edate,
     required this.etime,
@@ -26,6 +28,7 @@ class EventModel {
     return EventModel(
       id: map['_id'],
       ename: map['ename'],
+      ephoto:map['ephoto'],
       edate: map['edate'],
       etime: map['etime'],
       ecity: map['ecity'],
@@ -39,6 +42,7 @@ class EventModel {
     return {
       'id': id,
       'ename': ename,
+      'ephoto':ephoto,
       'edate': edate,
       'etime': etime,
       'ecity': ecity,

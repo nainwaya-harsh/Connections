@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SharedMoments extends StatelessWidget {
-  const SharedMoments({super.key});
+  final String guestName;
+  final String eventlocation;
+  const SharedMoments({super.key,required this.guestName,required this.eventlocation});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +26,11 @@ class SharedMoments extends StatelessWidget {
                       height: 20,
                     ),
                     Text(
-                      'You and tirth@yt2 shared moment at',
+                      'You and ${guestName} shared moment at',
                       style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w600, fontSize: 14),
                     ),
+                    SizedBox(width: 50),
                     IconButton(
                         onPressed: () {},
                         icon: Image.asset(
@@ -49,7 +52,7 @@ class SharedMoments extends StatelessWidget {
                       width: 10,
                     ),
                     Text(
-                      'Arijit Singh Concert',
+                      eventlocation,
                       style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w600, fontSize: 16),
                     ),

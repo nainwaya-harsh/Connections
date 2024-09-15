@@ -26,7 +26,7 @@ class EventAttendees extends StatefulWidget {
 class _EventAttendeesState extends State<EventAttendees> {
   EventService _eventService = EventService();
   bool attendingEvent = false;
-  List<User>? guestDetailList;
+  List<User> guestDetailList=[];
   
   @override
   void initState() {
@@ -112,7 +112,7 @@ class _EventAttendeesState extends State<EventAttendees> {
               width: double.infinity,
               height: 220,
               color: lightGrey,
-              child: Center(child: Text('Image Preview of the event')),
+              child: Center(child: widget.event.ephoto==''? Text('Image Preview of the event'):Image.network(widget.event.ephoto)),
             ),
           ),
           Text('Event Attendees', style: GoogleFonts.aBeeZee(fontSize: 24)),
